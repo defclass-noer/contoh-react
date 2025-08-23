@@ -1,15 +1,11 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [solAddress, setSolAddress] = useState("");
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
 
-  async function handleLogin(e) {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    setError("");
 
     const res = await fetch("/api/login", {
       method: "POST",
@@ -17,40 +13,63 @@ export default function Login() {
       body: JSON.stringify({ username, sol_address: solAddress }),
     });
 
-    const result = await res.json();
-    if (res.ok) {
-      // ⬇️ redirect ke profile dengan membawa username
-      navigate("/profile", { state: { username: result.user.username } });
+    const data = await res.json();
+    if (data.error) {
+      alert("Login failed: " + data.error);
     } else {
-      setError(result.error || "Login failed");
+      alert("Login success!");
+      window.location.href = "/profile";
     }
-  }
+  };
 
   return (
-    <div className="container mt-5 text-light">
+    <div className="form-container">
       <h2>Login</h2>
-      {error && <p className="text-danger">{error}</p>}
       <form onSubmit={handleLogin}>
-        <div className="mb-3">
-          <label>Username</label>
-          <input
-            className="form-control"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label>Solana Address</label>
-          <input
-            className="form-control"
-            value={solAddress}
-            onChange={(e) => setSolAddress(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit" className="btn btn-primary">Login</button>
+        <input
+          type="text"
+          placeholder="Solana Address"
+          value={solAddress}
+          onChange={(e) => setSolAddress(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+        <button type="submit">Login</button>
       </form>
+
+      <style>{`
+        .form-container {
+          max-width: 400px;
+          margin: 50px auto;
+          background: #000;
+          padding: 20px;
+          border-radius: 8px;
+          color: #fff;
+        }
+        input {
+          width: 100%;
+          padding: 10px;
+          margin: 8px 0;
+          border-radius: 5px;
+          border: none;
+        }
+        button {
+          width: 100%;
+          background: #FFD700;
+          color: #000;
+          padding: 10px;
+          font-weight: bold;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+      `}</style>
     </div>
   );
-        }
+}
