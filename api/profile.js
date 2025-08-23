@@ -19,36 +19,35 @@ export default async function handler(req, res) {
   const { username } = req.body;
 
   try {
-    // ambil user dari DB 1
+    // 🔹 Ambil user dari Supabase1
     const { data: user, error: userError } = await supabase1
       .from("users")
-      .select("id, username, sol_address, email, created_at")
+      .select("username, sol_address")
       .eq("username", username)
       .single();
 
     if (userError || !user) {
-      return res.status(404).json({ error: "User not found in Supabase1" });
+      return res.status(404).json({ error: "User not found" });
     }
 
-    // ambil portfolio/wallet dari DB 2
-    const { data: portfolio, error: portfolioError } = await supabase2
-      .from("portfolio")
-      .select("balance_usd, balance_token, last_update")
-      .eq("username", username)
+    // 🔹 Ambil simulasi BDC dari Supabase2
+    const { data: bdc, error: bdcError } = await supabase2
+      .from("bdc_simulation")
+      .select("harga_bdc, token_sirkulasi, token_progress, dividen")
+      .order("id", { ascending: false }) // ambil data terbaru
+      .limit(1)
       .single();
 
-    if (portfolioError) {
-      return res.status(500).json({ error: "Failed to fetch portfolio", details: portfolioError.message });
+    if (bdcError) {
+      return res.status(500).json({ error: "Failed to fetch simulation data", details: bdcError.message });
     }
 
     return res.status(200).json({
-      profile: {
-        ...user,
-        portfolio: portfolio || null, // gabungkan
-      },
+      profile: user,
+      market: bdc,
     });
   } catch (err) {
-    console.error("Profile error:", err);
+    console.error("Profile API error:", err);
     return res.status(500).json({ error: "Internal server error", details: err.message });
   }
-}
+  }
