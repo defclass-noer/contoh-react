@@ -22,8 +22,8 @@ function Login() {
     if (data.error) {
       setError(data.error);
     } else {
-      localStorage.setItem("userId", data.user.id);
-      navigate("/profile");
+      // langsung kirim user ke halaman Profile
+      navigate("/profile", { state: { user: data.user } });
     }
   };
 
@@ -31,8 +31,20 @@ function Login() {
     <div className="auth-container">
       <h2>Login</h2>
       <form onSubmit={handleLogin}>
-        <input type="text" placeholder="Solana Address" value={solAddress} onChange={(e) => setSolAddress(e.target.value)} required />
-        <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+        <input
+          type="text"
+          placeholder="Solana Address"
+          value={solAddress}
+          onChange={(e) => setSolAddress(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
         {error && <p className="error">{error}</p>}
         <button type="submit">Login</button>
       </form>
@@ -41,3 +53,4 @@ function Login() {
 }
 
 export default Login;
+            
