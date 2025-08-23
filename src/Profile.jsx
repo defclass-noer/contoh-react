@@ -35,8 +35,8 @@ export default function Profile() {
     const value = Number(num);
     if (type === "USD") {
       return `$${value.toLocaleString("en-US", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
+        minimumFractionDigits: 8,
+        maximumFractionDigits: 8,
       })}`;
     }
     if (type === "BDC") {
