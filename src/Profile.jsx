@@ -6,9 +6,9 @@ export default function Profile() {
   const params = new URLSearchParams(location.search);
   const username = params.get("username");
 
-  const [profile, setProfile] = useState<any>(null);
-  const [market, setMarket] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [profile, setProfile] = useState(null);
+  const [market, setMarket] = useState(null);
+  const [error, setError] = useState(null);
 
   async function fetchProfile() {
     try {
@@ -45,60 +45,40 @@ export default function Profile() {
   if (error) return <p className="text-danger">{error}</p>;
   if (!profile) return <p>Loading profile...</p>;
 
-  const formatNumber = (num: any) => {
+  // Helper untuk format angka
+  const formatNumber = (num) => {
     if (num == null) return "-";
-    return Number(num).toLocaleString("id-ID");
+    return Number(num).toLocaleString("id-ID"); // pakai format Indonesia
   };
 
   return (
     <div className="container my-4 text-light">
+      <h2 className="mb-4 text-warning">Profile</h2>
 
-      {/* Profile Box */}
-      <div className="card bg-dark p-3 shadow-sm rounded-3 border-0 mb-3">
-        <h5 className="text-warning mb-3">Profile</h5>
-        <div className="d-flex flex-column gap-1">
-          <div><strong>Username:</strong> {profile.username}</div>
-          <div><strong>Solana Address:</strong> {profile.sol_address}</div>
-        </div>
+      {/* Card Profile */}
+      <div className="card bg-dark text-light mb-4 p-3 border border-warning rounded-3 shadow">
+        <h4 className="text-warning">User Info</h4>
+        <p><strong>Username:</strong> {profile.username}</p>
+        <p><strong>Solana Address:</strong> {profile.sol_address}</p>
       </div>
 
-      {/* Market Stats */}
+      {/* Card Market */}
       {market && (
-        <div className="card bg-dark p-3 shadow-sm rounded-3 border-0">
-          <h5 className="text-success mb-3">BDC Coin Market</h5>
-          <div className="row">
-            <div className="col-6 mb-2">
-              <div className="text-secondary small">Price BDC</div>
-              <div className="fw-bold">${market.harga_bdc}</div>
-            </div>
-            <div className="col-6 mb-2">
-              <div className="text-secondary small">Token Circulation</div>
-              <div className="fw-bold">{formatNumber(market.token_sirkulasi)}</div>
-            </div>
-            <div className="col-6 mb-2">
-              <div className="text-secondary small">Transaction Progress</div>
-              <div className="fw-bold">{formatNumber(market.token_progress)}</div>
-            </div>
-            <div className="col-6 mb-2">
-              <div className="text-secondary small">Global Dividend</div>
-              <div className="fw-bold">{formatNumber(market.dividen)}</div>
-            </div>
-          </div>
+        <div className="card bg-dark text-light p-3 border border-success rounded-3 shadow">
+          <h4 className="text-success">BDC Coin Market</h4>
+          <p><strong>Price BDC:</strong> ${market.harga_bdc}</p>
+          <p><strong>Token Circulation:</strong> {formatNumber(market.token_sirkulasi)}</p>
+          <p><strong>Transaction Progress:</strong> {formatNumber(market.token_progress)}</p>
+          <p><strong>Global Dividend:</strong> {formatNumber(market.dividen)}</p>
         </div>
       )}
 
-      {/* Tombol Aksi */}
+      {/* Buttons */}
       <div className="d-flex gap-3 mt-4">
-        <button className="btn btn-success flex-fill rounded-pill py-2 fw-bold">
-          Deposit
-        </button>
-        <button className="btn btn-danger flex-fill rounded-pill py-2 fw-bold">
-          Withdrawal
-        </button>
-        <button className="btn btn-primary flex-fill rounded-pill py-2 fw-bold">
-          Swap
-        </button>
+        <button className="btn btn-success flex-fill">Deposit</button>
+        <button className="btn btn-danger flex-fill">Withdrawal</button>
+        <button className="btn btn-primary flex-fill">Swap</button>
       </div>
     </div>
   );
-}
+      }
