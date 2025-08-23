@@ -1,34 +1,29 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
-function Login() {
-  const [solAddress, setSolAddress] = useState("");
+export default function Login() {
   const [username, setUsername] = useState("");
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const [solAddress, setSolAddress] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(null);
 
     const res = await fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sol_address: solAddress, username }),
+      body: JSON.stringify({ username, sol_address: solAddress }),
     });
 
     const data = await res.json();
-
     if (data.error) {
-      setError(data.error);
+      alert("Login failed: " + data.error);
     } else {
-      // langsung kirim user ke halaman Profile
-      navigate("/profile", { state: { user: data.user } });
+      alert("Login success!");
+      window.location.href = "/profile";
     }
   };
 
   return (
-    <div className="auth-container">
+    <div className="form-container">
       <h2>Login</h2>
       <form onSubmit={handleLogin}>
         <input
@@ -45,12 +40,36 @@ function Login() {
           onChange={(e) => setUsername(e.target.value)}
           required
         />
-        {error && <p className="error">{error}</p>}
         <button type="submit">Login</button>
       </form>
+
+      <style>{`
+        .form-container {
+          max-width: 400px;
+          margin: 50px auto;
+          background: #000;
+          padding: 20px;
+          border-radius: 8px;
+          color: #fff;
+        }
+        input {
+          width: 100%;
+          padding: 10px;
+          margin: 8px 0;
+          border-radius: 5px;
+          border: none;
+        }
+        button {
+          width: 100%;
+          background: #FFD700;
+          color: #000;
+          padding: 10px;
+          font-weight: bold;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+      `}</style>
     </div>
   );
 }
-
-export default Login;
-            
