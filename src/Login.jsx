@@ -17,8 +17,8 @@ export default function Login() {
     if (data.error) {
       alert("Login failed: " + data.error);
     } else {
-      alert("Login success!");
-      window.location.href = "/profile";
+      // Redirect ke profile dengan query string
+      window.location.href = `/profile?username=${username}`;
     }
   };
 
