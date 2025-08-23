@@ -1,14 +1,31 @@
-import { authDb } from "./supabaseClients";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.SUPABASE1_URL,
+  process.env.SUPABASE1_SERVICE_ROLE_KEY
+);
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
   const { username, sol_address, email, location } = req.body;
 
-  const { error } = await authDb.from("users").insert([
-    { username, sol_address, email, location }
-  ]);
+  if (!username || !sol_address || !email) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
 
-  if (error) return res.status(400).json({ error: error.message });
-  return res.status(200).json({ success: true });
+  const { data, error } = await supabase
+    .from("users")
+    .insert([{ username, sol_address, email, location }])
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Register error:", error);
+    return res.status(500).json({ error: "Failed to register" });
+  }
+
+  return res.status(200).json({ user: data });
 }
